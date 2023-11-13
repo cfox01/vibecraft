@@ -1,0 +1,2 @@
+# vibecraft
+Spotify playlist generator
