@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native';
 
 export default function Login() {
   return (
-      <Button mode="contained" style = {styles.button}>Login</Button>
+      <Button mode="contained" style = {styles.button} labelStyle={styles.buttonText} buttonColor= "#1D062E">Login</Button>
   );
 }
 
@@ -17,4 +17,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
   },
+  buttonText: {
+    color: 'white', 
+    fontWeight: 'bold', 
+    fontSize: 20,
+  },
+
 });
