@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { MD3LightTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
 
-import Login from './LoginPage';
+import Login from './LoginButton';
 import Logo from './Logo';
 
 const PlaceholderImage = require('./assets/circle.png');
@@ -78,3 +78,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: '#181737',
+    secondary: '#00CB96',
+    accent: '#7C0F8D',
+  },
+};
