@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+// LoginButton.js
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, Button, Linking } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
 import * as Crypto from 'expo-crypto';
@@ -7,11 +8,10 @@ const CLIENT_ID = '2277c0609c46422c816b5a42de1f5721'; // Replace with your Spoti
 const REDIRECT_URI = 'http://localhost:8888/callback'; // Expo's redirect URI
 const AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT_URI}&scope=user-read-email`;
 
-export default function App() {
+const LoginButton = ({ onLogin }) => {
   const [spotifyToken, setSpotifyToken] = useState(null);
 
   useEffect(() => {
-    // Handle the initial URL when the app is opened from the redirect URI
     Linking.addEventListener('url', handleRedirect);
     return () => Linking.removeEventListener('url', handleRedirect);
   }, []);
@@ -37,9 +37,6 @@ export default function App() {
 
   const fetchAccessToken = async (code) => {
     try {
-      // Perform the token exchange using the authorization code
-      // This is where you'd make a POST request to Spotify's token endpoint
-      // with the authorization code obtained from the redirect URI
       const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
         method: 'POST',
         headers: {
@@ -57,7 +54,8 @@ export default function App() {
       const tokenData = await tokenResponse.json();
       if (tokenData.access_token) {
         setSpotifyToken(tokenData.access_token);
-        // Token received, perform actions with Spotify API
+        // Inform the Navigation component about successful login
+        onLogin();
       }
     } catch (error) {
       console.error('Error fetching access token:', error);
@@ -71,7 +69,6 @@ export default function App() {
     try {
       const result = await WebBrowser.openAuthSessionAsync(authUrl, REDIRECT_URI);
 
-      // Handling the result when the flow is complete
       if (result.type === 'success') {
         const urlParams = new URL(result.url);
         const code = urlParams.searchParams.get('code');
@@ -90,14 +87,14 @@ export default function App() {
         <Button
           title="Login with Spotify"
           onPress={handleSpotifyLogin}
-          color= "white"
+          color="white"
         />
       ) : (
         <Text>Authenticated with Spotify!</Text>
       )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -110,3 +107,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
 });
+
+export default LoginButton;
+
