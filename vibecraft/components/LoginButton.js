@@ -9,7 +9,7 @@ const CLIENT_ID = process.env.EXPO_PUBLIC_ID; // Replace with your Spotify Clien
 const REDIRECT_URI = process.env.EXPO_PUBLIC_URI;// Expo's redirect URI
 const CLIENT_SECRET = process.env.EXPO_PUBLIC_SECRET; // Spotufy client secret
 
-const AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT_URI}&scope=user-read-email`;
+const AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT_URI}&scope=user-read-email,user-library-read,playlist-modify-public,playlist-modify-private,user-follow-read`;
 
 const LoginButton = ({ onLogin }) => {
   const [loggedIn, setLoggedIn] = useState(false);
