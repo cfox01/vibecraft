@@ -11,7 +11,7 @@ const Stack = createStackNavigator();
 
 const AuthStack = ({ onLogin }) => (
   <Stack.Navigator>
-    <Stack.Screen name="Login">
+    <Stack.Screen name="Login" options={{headerShown: false}}>
       {() => <Loginpage onLogin={onLogin} />}
     </Stack.Screen>
   </Stack.Navigator>
@@ -19,8 +19,7 @@ const AuthStack = ({ onLogin }) => (
 
 const AppStack = () => (
   <Stack.Navigator>
-    <Stack.Screen name="Home" component={Homepage} />
-    
+    <Stack.Screen name="Home" component={Homepage}/>
   </Stack.Navigator>
 );
 
