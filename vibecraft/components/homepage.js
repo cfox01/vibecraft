@@ -1,21 +1,28 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View } from 'react-native';
+import { SearchBar } from 'react-native-elements';
 
-const Homepage = () => {
+const HomePage = () => {
+  const [searchText, setSearchText] = useState('');
+
+  const handleSearch = (text) => {
+    // Handle your search logic here
+    setSearchText(text);
+    // For example, you can filter a list based on searchText
+    // Update your filtered data or trigger an API call with the text
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>Welcome to the home screen!</Text>
-      {/* Add more content as needed */}
+    <View>
+      <SearchBar
+        placeholder="Type Here..."
+        onChangeText={handleSearch}
+        value={searchText}
+      />
+      {/* Your other UI components */}
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+export default HomePage;
 
-export default Homepage;
