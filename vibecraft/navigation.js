@@ -20,6 +20,7 @@ const AuthStack = ({ onLogin }) => (
 const AppStack = () => (
   <Stack.Navigator>
     <Stack.Screen name="Home" component={Homepage} />
+    
   </Stack.Navigator>
 );
 
