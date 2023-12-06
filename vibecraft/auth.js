@@ -10,6 +10,7 @@ const AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&
 
 let accessToken = null;
 let userDisplayName = null;
+let refreshToken = null;
 
 export const setAccessToken = (token) => {
   accessToken = token;
@@ -17,6 +18,14 @@ export const setAccessToken = (token) => {
 
 export const getAccessToken = () => {
   return accessToken;
+};
+
+export const setRefreshToken = (rtoken) => {
+  refreshToken = rtoken;
+};
+
+export const getRefreshToken = () => {
+  return refreshToken;
 };
 
 export const setUserDisplayName = (name) => {
@@ -64,6 +73,7 @@ export const fetchAccessToken = async (code) => {
       if (tokenData.access_token) {
         setUserDisplayName(await fetchUserInfo(tokenData.access_token));
         setAccessToken(tokenData.access_token);
+        setRefreshToken(tokenData.refresh_token);
         return true;
 
       } else {
@@ -73,6 +83,30 @@ export const fetchAccessToken = async (code) => {
       console.error('Error fetching access token:', error);
     }
   };
+
+export const RefreshAccessToken = async () => {
+
+     // refresh token that has been previously stored
+     const reToken = localStorage.getItem('refresh_token');
+     const url = "https://accounts.spotify.com/api/token";
+  
+      const payload = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+          grant_type: 'refresh_token',
+          refresh_token: reToken,
+          client_id: CLIENT_ID
+        }),
+      }
+      const body = await fetch(url, payload);
+      const response = await body.json();
+
+      setRefreshToken(response.refresh_token);
+      setAccessToken(response.access_token);
+}
 
 export const fetchUserInfo = async (accessToken) => {
     try {
