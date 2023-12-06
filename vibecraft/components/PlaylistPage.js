@@ -3,8 +3,9 @@ import { View, StyleSheet } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
 
+
 const PlaylistPage = () => {
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState('Guest');
 
   const handleSearch = (text) => {
     // Handle your search logic here

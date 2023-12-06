@@ -1,17 +1,23 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 
+import { getUserDisplayName } from '../auth';
+
 const HomePage = ({ navigation }) => {
+
   const handleButtonClick = () => {
     // Navigate to the "Playlist" page when the button is clicked
     navigation.navigate('Playlist');
   };
 
+  const displayName = getUserDisplayName();
+
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Image source={require('../assets/circle.png')} style={styles.logo} />
-        <Text style={styles.headerText}>User Name</Text>
+        <Text style={styles.headerText}>{displayName}</Text>
       </View>
       <View style={styles.content}>
         <TouchableOpacity style={styles.button} onPress={handleButtonClick}>
