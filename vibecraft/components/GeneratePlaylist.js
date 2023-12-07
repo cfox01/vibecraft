@@ -85,7 +85,7 @@ const PlaylistGenerator = () => {
 
   const createPlaylistWithTracks = async (albums, accessToken) => {
     try {
-      const playlistName = 'My Playlist';
+      const playlistName = 'Testing';
       const playlistDescription = 'Description for my playlist';
 
       const createPlaylistResponse = await fetch('https://api.spotify.com/v1/me/playlists', {
