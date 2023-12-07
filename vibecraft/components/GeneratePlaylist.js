@@ -67,8 +67,30 @@ const PlaylistGenerator = () => {
     };
   
     const fetchAlbumTracks = async (albumId) => {
-      // ... existing code ...
-    };
+        try {
+          const accessToken = await getAccessToken();
+    
+          const response = await fetch(`https://api.spotify.com/v1/albums/${albumId}/tracks?market=US`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+    
+          if (!response.ok) {
+            throw new Error('Network response was not ok.');
+          }
+    
+          const data = await response.json();
+          console.log(data);
+    
+          // Handle the tracks data as needed
+        } catch (error) {
+          console.error('Error fetching album tracks:', error);
+          Alert.alert('Error', 'Failed to fetch album tracks. Please try again.');
+        }
+      };
   
     const handleAlbumPress = (albumId) => {
       // Fetch tracks for the selected album
