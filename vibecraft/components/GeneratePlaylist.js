@@ -1,6 +1,6 @@
 // Import necessary modules and components
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { View, StyleSheet, Text, FlatList, Alert } from 'react-native';
 import { getAccessToken } from '../auth';
 import { useRoute } from '@react-navigation/native';
 
@@ -9,6 +9,14 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
     paddingTop: 20,
+  },
+  playlistHeader: {
+    marginBottom: 10,
+    alignItems: 'center',
+  },
+  playlistHeaderText: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   albumCard: {
     margin: 10,
@@ -21,104 +29,165 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  // Add more styles as needed
 });
 
 const PlaylistGenerator = () => {
+  const route = useRoute();
+  const { selectedArtistId } = route.params;
 
-    const route = useRoute();
-    const { selectedArtistId } = route.params;
+  const [playlistTracks, setPlaylistTracks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [playlistName, setPlaylistName] = useState('');
+  const [playlistDescription, setPlaylistDescription] = useState('');
 
-    const [albums, setAlbums] = useState([]);
-    const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    fetchArtistAlbumsAndCreatePlaylist();
+  }, [selectedArtistId]);
 
-    // console.log('Catch:', selectedArtistId);
-  
-    useEffect(() => {
-      // Fetch the artist's albums when the component mounts or when selectedArtistId changes
-      fetchArtistAlbums();
-    }, [selectedArtistId]); // Add selectedArtistId as a dependency to trigger useEffect on changes
-  
-    const fetchArtistAlbums = async () => {
-      try {
-        const accessToken = await getAccessToken();
-  
-        const response = await fetch(`https://api.spotify.com/v1/artists/${selectedArtistId}/albums?market=US&limit=10`, {
+  const fetchArtistAlbumsAndCreatePlaylist = async () => {
+    try {
+      const accessToken = await getAccessToken();
+
+      const response = await fetch(`https://api.spotify.com/v1/artists/${selectedArtistId}/albums?market=US&limit=10`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok.');
+      }
+
+      const data = await response.json();
+      const albums = data.items || [];
+
+      const { playlistId, name, description } = await createPlaylistWithTracks(albums, accessToken);
+
+      setPlaylistName(name);
+      setPlaylistDescription(description);
+
+      const playlistTracksResponse = await fetchPlaylistTracks(playlistId, accessToken);
+
+      if (playlistTracksResponse.ok) {
+        const playlistTracksData = await playlistTracksResponse.json();
+        setPlaylistTracks(playlistTracksData.items || []);
+        setLoading(false);
+      } else {
+        throw new Error('Failed to fetch playlist tracks.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      Alert.alert('Error', 'Failed to fetch data. Please try again.');
+    }
+  };
+
+  const createPlaylistWithTracks = async (albums, accessToken) => {
+    try {
+      const playlistName = 'My Playlist';
+      const playlistDescription = 'Description for my playlist';
+
+      const createPlaylistResponse = await fetch('https://api.spotify.com/v1/me/playlists', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          name: playlistName,
+          description: playlistDescription,
+          public: false,
+        }),
+      });
+
+      if (!createPlaylistResponse.ok) {
+        throw new Error('Failed to create playlist.');
+      }
+
+      const playlistData = await createPlaylistResponse.json();
+      const playlistId = playlistData.id;
+
+      for (const album of albums) {
+        const albumId = album.id;
+        const tracksResponse = await fetch(`https://api.spotify.com/v1/albums/${albumId}/tracks?market=US`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${accessToken}`,
           },
         });
-  
-        if (!response.ok) {
-          throw new Error('Network response was not ok.');
-        }
-  
-        const data = await response.json();
-        // console.log(data);
-  
-        setAlbums(data.items || []);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching artist albums:', error);
-        Alert.alert('Error', 'Failed to fetch artist albums. Please try again.');
-      }
-    };
-  
-    const fetchAlbumTracks = async (albumId) => {
-        try {
-          const accessToken = await getAccessToken();
-    
-          const response = await fetch(`https://api.spotify.com/v1/albums/${albumId}/tracks?market=US`, {
-            method: 'GET',
+
+        if (tracksResponse.ok) {
+          const tracksData = await tracksResponse.json();
+          const trackIds = tracksData.items.map((track) => track.id);
+
+          const addTracksResponse = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+            method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${accessToken}`,
             },
+            body: JSON.stringify({
+              uris: trackIds.map((id) => `spotify:track:${id}`),
+            }),
           });
-    
-          if (!response.ok) {
-            throw new Error('Network response was not ok.');
+
+          if (!addTracksResponse.ok) {
+            console.error('Failed to add tracks to the playlist.');
           }
-    
-          const data = await response.json();
-        //   console.log(data);
-    
-          // Handle the tracks data as needed
-        } catch (error) {
-          console.error('Error fetching album tracks:', error);
-          Alert.alert('Error', 'Failed to fetch album tracks. Please try again.');
+        } else {
+          console.error('Failed to fetch tracks for the album.');
         }
-      };
-  
-    const handleAlbumPress = (albumId) => {
-      // Fetch tracks for the selected album
-      fetchAlbumTracks(albumId);
-    };
-  
-    const renderAlbumItem = ({ item }) => (
-      <TouchableOpacity onPress={() => handleAlbumPress(item.id)}>
-        <View style={styles.albumCard}>
-          <Text style={styles.albumName}>{item.name}</Text>
-          {/* Add more album information as needed */}
-        </View>
-      </TouchableOpacity>
-    );
-  
-    return (
-      <View style={styles.container}>
-        {loading ? (
-          <Text>Loading...</Text>
-        ) : (
-          <FlatList
-            data={albums}
-            keyExtractor={(item) => item.id}
-            renderItem={renderAlbumItem}
-          />
-        )}
-      </View>
-    );
+      }
+
+      return { playlistId, name: playlistName, description: playlistDescription };
+    } catch (error) {
+      console.error('Error creating playlist:', error);
+      Alert.alert('Error', 'Failed to create playlist. Please try again.');
+      throw error;
+    }
   };
-  
-  export default PlaylistGenerator;
+
+  const fetchPlaylistTracks = async (playlistId, accessToken) => {
+    try {
+      const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      return response;
+    } catch (error) {
+      console.error('Error fetching playlist tracks:', error);
+      throw error;
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.playlistHeader}>
+        <Text style={styles.playlistHeaderText}>Playlist Name: {playlistName}</Text>
+        <Text style={styles.playlistHeaderText}>Playlist Description: {playlistDescription}</Text>
+      </View>
+      {loading ? (
+        <Text>Loading...</Text>
+      ) : (
+        <FlatList
+          data={playlistTracks}
+          keyExtractor={(item) => item.track.id}
+          renderItem={({ item }) => (
+            <View style={styles.albumCard}>
+              <Text style={styles.albumName}>{item.track.name}</Text>
+              {/* Add more track information as needed */}
+            </View>
+          )}
+        />
+      )}
+    </View>
+  );
+};
+
+export default PlaylistGenerator;
