@@ -1,7 +1,6 @@
 // LoginButton.js
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, Button, Linking } from 'react-native';
-import * as WebBrowser from 'expo-web-browser';
+import { View, StyleSheet, Button } from 'react-native';
 
 import { handleSpotifyLogin } from '../auth';
 

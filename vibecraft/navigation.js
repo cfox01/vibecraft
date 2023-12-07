@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Loginpage from './components/loginpage';
 import Homepage from './components/homepage';
 import PlaylistPage from './components/PlaylistPage';
+import GeneratePlaylist from './components/GeneratePlaylist';
 
 
 const Stack = createStackNavigator();
@@ -21,12 +22,13 @@ const AuthStack = ({ onLogin }) => (
 const AppStack = () => (
   <Stack.Navigator>
     <Stack.Screen name="Home" component={Homepage} options={{headerShown: false}}/>
-    <Stack.Screen name="Playlist" component={PlaylistPage} options={{headerShadowVisible: false, headerStyle: {
+    <Stack.Screen name="Playlist" component={PlaylistPage} options={{title: 'Playlist Generator', headerShadowVisible: false, headerStyle: {
             backgroundColor: '#242424',
           }, headerTitleStyle: {
             color: '#fff',
           },
             }}/>
+    <Stack.Screen name="GeneratePlaylist" component={GeneratePlaylist}/>
   </Stack.Navigator>
 );
 
