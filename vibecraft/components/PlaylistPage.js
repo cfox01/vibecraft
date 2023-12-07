@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Alert, Text, Image, ScrollView } from 'react-native'; // Add ScrollView
+import { View, StyleSheet, Alert, Text, Image, ScrollView,TouchableOpacity} from 'react-native'; // Add ScrollView
 import { SearchBar } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
 import { getAccessToken } from '../auth';
 
 const styles = StyleSheet.create({
@@ -61,6 +62,8 @@ const PlaylistPage = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
+  const navigation = useNavigation();
+
   const handleSearch = async (text) => {
     try {
       setSearchText(text);
@@ -80,7 +83,7 @@ const PlaylistPage = () => {
       }
 
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       setSearchResults(data.artists.items || []);
       setShowDropdown(text.length > 0); // Show the dropdown when results are available
     } catch (error) {
@@ -90,18 +93,22 @@ const PlaylistPage = () => {
   };
 
   const handleKeyPress = () => {
-    console.log("Pressed Enter", searchText);
+    // console.log("Pressed Enter", searchText);
     handleSearch(searchText);
   };
 
   const handleSelectArtist = (artist) => {
-    // Handle selection logic, e.g., navigate to artist details page
     console.log('Selected artist:', artist);
+    // Yellow comment: Set the selected artist
     setShowDropdown(false);
+
+    console.log('Try:', artist.id);
+
+    navigation.navigate('GeneratePlaylist', { selectedArtistId: artist.id });
   };
 
   useEffect(() => {
-    // Yellow comment: Close the dropdown when the search text is cleared
+
     if (searchText === '') {
       setShowDropdown(false);
     }
@@ -127,27 +134,24 @@ const PlaylistPage = () => {
 
     
 
-  {showDropdown && (
+    {showDropdown && (
         <ScrollView style={styles.dropdownContainer}>
           {searchResults.map((artist, index) => (
             <React.Fragment key={artist.id}>
-              {/* Updated to apply the color to the Text component */}
-              <View style={styles.dropdownItem}>
+              {/* Yellow comment: Use TouchableOpacity for better feedback */}
+              <TouchableOpacity
+                style={styles.dropdownItem}
+                onPress={() => handleSelectArtist(artist)}
+              >
                 <Text style={styles.dropdownText}>{artist.name}</Text>
-              </View>
+              </TouchableOpacity>
               {index < searchResults.length - 1 && <View style={styles.separator} />}
             </React.Fragment>
           ))}
         </ScrollView>
-      )}  
+      )}
 
-      {/* <View style={styles.resultsContainer}>
-        {searchResults.map((artist) => (
-          <View key={artist.id} style={styles.artistCard}>
-            <Text style={styles.artistName}>{artist.name}</Text>
-          </View>
-        ))}
-      </View> */}
+
     </LinearGradient>
   );
 };

@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Loginpage from './components/loginpage';
 import Homepage from './components/homepage';
 import PlaylistPage from './components/PlaylistPage';
+import GeneratePlaylist from './components/GeneratePlaylist';
 
 
 const Stack = createStackNavigator();
@@ -27,6 +28,7 @@ const AppStack = () => (
             color: '#fff',
           },
             }}/>
+    <Stack.Screen name="GeneratePlaylist" component={GeneratePlaylist}/>
   </Stack.Navigator>
 );
 
