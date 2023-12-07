@@ -98,11 +98,11 @@ const PlaylistPage = () => {
   };
 
   const handleSelectArtist = (artist) => {
-    console.log('Selected artist:', artist);
-    // Yellow comment: Set the selected artist
+    // console.log('Selected artist:', artist);
+
     setShowDropdown(false);
 
-    console.log('Try:', artist.id);
+    // console.log('Try:', artist.id);
 
     navigation.navigate('GeneratePlaylist', { selectedArtistId: artist.id });
   };
@@ -138,7 +138,6 @@ const PlaylistPage = () => {
         <ScrollView style={styles.dropdownContainer}>
           {searchResults.map((artist, index) => (
             <React.Fragment key={artist.id}>
-              {/* Yellow comment: Use TouchableOpacity for better feedback */}
               <TouchableOpacity
                 style={styles.dropdownItem}
                 onPress={() => handleSelectArtist(artist)}

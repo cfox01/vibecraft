@@ -32,7 +32,7 @@ const PlaylistGenerator = () => {
     const [albums, setAlbums] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    console.log('Catch:', selectedArtistId);
+    // console.log('Catch:', selectedArtistId);
   
     useEffect(() => {
       // Fetch the artist's albums when the component mounts or when selectedArtistId changes
@@ -56,7 +56,7 @@ const PlaylistGenerator = () => {
         }
   
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
   
         setAlbums(data.items || []);
         setLoading(false);
