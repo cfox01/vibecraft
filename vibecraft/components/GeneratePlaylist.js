@@ -83,7 +83,7 @@ const PlaylistGenerator = () => {
           }
     
           const data = await response.json();
-          console.log(data);
+        //   console.log(data);
     
           // Handle the tracks data as needed
         } catch (error) {
