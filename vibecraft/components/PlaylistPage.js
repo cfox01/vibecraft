@@ -44,7 +44,7 @@ const PlaylistPage = () => {
 
       const accessToken = await getAccessToken(); // Fetch the access token
 
-      const response = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(text)}&type=artist`, {
+      const response = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(text)}&type=artist&limit=5`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -65,11 +65,9 @@ const PlaylistPage = () => {
     }
   };
 
-  const handleKeyPress = ({ nativeEvent }) => {
-    if (nativeEvent.key === 'Enter') {
-      console.log("Pressed Enter");
+  const handleKeyPress = () => {
+      console.log("Pressed Enter", searchText);
       handleSearch(searchText);
-    }
   };
 
   return (
@@ -84,10 +82,10 @@ const PlaylistPage = () => {
       style={styles.container}
     >
       <SearchBar
-        placeholder="Artist Name Here..."
+        placeholder="Enter Artist Name..."
         onChangeText={setSearchText}
         value={searchText}
-        onKeyPress={handleKeyPress}
+        onSubmitEditing={handleKeyPress}
       />
   
       {/* Display the search results */}
