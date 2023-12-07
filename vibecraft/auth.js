@@ -58,6 +58,7 @@ export const fetchAccessToken = async (code) => {
         client_secret: CLIENT_SECRET,
       });
 
+
       const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
         method: 'POST',
         headers: {
@@ -68,6 +69,7 @@ export const fetchAccessToken = async (code) => {
 
       // Handle the response and parse JSON
       const tokenData = await tokenResponse.json();
+
 
       // Check if access_token exists in the response
       if (tokenData.access_token) {
@@ -87,22 +89,27 @@ export const fetchAccessToken = async (code) => {
 export const RefreshAccessToken = async () => {
 
      // refresh token that has been previously stored
-     const reToken = localStorage.getItem('refresh_token');
-     const url = "https://accounts.spotify.com/api/token";
+     const reToken = getRefreshToken();
+
+      // Construct the body parameters using query-string
+      const bod = queryString.stringify({
+        grant_type: 'refresh_token',
+        refresh_token: reToken,
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+      });
+
   
       const payload = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         },
-        body: new URLSearchParams({
-          grant_type: 'refresh_token',
-          refresh_token: reToken,
-          client_id: CLIENT_ID
-        }),
+        body: bod,
       }
-      const body = await fetch(url, payload);
-      const response = await body.json();
+
+      const bo = await fetch("https://accounts.spotify.com/api/token", payload);
+      const response = await bo.json();
 
       setRefreshToken(response.refresh_token);
       setAccessToken(response.access_token);
