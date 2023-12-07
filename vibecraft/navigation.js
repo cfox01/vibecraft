@@ -21,7 +21,7 @@ const AuthStack = ({ onLogin }) => (
 const AppStack = () => (
   <Stack.Navigator>
     <Stack.Screen name="Home" component={Homepage} options={{headerShown: false}}/>
-    <Stack.Screen name="Playlist" component={PlaylistPage} options={{headerShadowVisible: false, headerStyle: {
+    <Stack.Screen name="Playlist" component={PlaylistPage} options={{title: 'Playlist Generator', headerShadowVisible: false, headerStyle: {
             backgroundColor: '#242424',
           }, headerTitleStyle: {
             color: '#fff',
