@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput, Button, FlatList, Keyboard } from 'react-native';
+import { View, StyleSheet, Text, TextInput, Button, FlatList, Keyboard, TouchableOpacity } from 'react-native';
 import { getAccessToken } from '../auth';
 import { useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+
 
 const styles = StyleSheet.create({
   container: {
@@ -37,6 +38,18 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   albumName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  customButton: {
+    backgroundColor: '#43464B', 
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#d3d3d3', 
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -188,46 +201,51 @@ const PlaylistGenerator = () => {
       end={{ x: 1, y: 1 }}
       style={styles.container}
     >
-    <View style={styles.container}>
-      <View style={styles.inputContainer}>
-        <Text>Playlist Name:</Text>
-        <TextInput
-          style={styles.input}
-          value={playlistName}
-          onChangeText={(text) => setPlaylistName(text)}
-          placeholder="..."
-          placeholderTextColor={'#d3d3d3'} // light gray
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Text>Playlist Description:</Text>
-        <TextInput
-          style={styles.input}
-          value={playlistDescription}
-          onChangeText={(text) => setPlaylistDescription(text)}
-          placeholder="..."
-          placeholderTextColor={'#d3d3d3'} //light gray
-          multiline
-          numberOfLines={4} // You can adjust the number of lines as needed
-        />
-      </View>
-      <Button title="Generate Playlist" onPress={handleGeneratePlaylist} />
-      {playlistTracks.length > 0 && (
-        <View style={styles.playlistHeader}>
-          <Text style={styles.playlistHeaderText}>Playlist Name: {playlistName}</Text>
-          <Text style={styles.playlistHeaderText}>Playlist Description: {playlistDescription}</Text>
-          <FlatList
-            data={playlistTracks}
-            keyExtractor={(item) => item.track.id}
-            renderItem={({ item }) => (
-              <View style={styles.albumCard}>
-                <Text style={styles.albumName}>{item.track.name}</Text>
-              </View>
-            )}
+      <View style={styles.container}>
+        <View style={[styles.inputContainer, { marginBottom: 20 }]}>
+          <Text>Playlist Name:</Text>
+          <TextInput
+            style={[styles.input, styles.darkBackground]} // Applying dark background style
+            value={playlistName}
+            onChangeText={(text) => setPlaylistName(text)}
+            placeholder="..."
+            placeholderTextColor={'#d3d3d3'} // Light gray
           />
         </View>
-      )}
-    </View>
+        <View style={[styles.inputContainer, { marginBottom: 20 }]}>
+          <Text>Playlist Description:</Text>
+          <TextInput
+            style={[styles.input, styles.darkBackground]} // Applying dark background style
+            value={playlistDescription}
+            onChangeText={(text) => setPlaylistDescription(text)}
+            placeholder="..."
+            placeholderTextColor={'#d3d3d3'} // Light gray
+            multiline
+            numberOfLines={4}
+          />
+        </View>
+        <TouchableOpacity
+          style={styles.customButton} // Styling the custom button
+          onPress={handleGeneratePlaylist}
+        >
+          <Text style={styles.buttonText}>Generate Playlist</Text>
+        </TouchableOpacity>
+        {playlistTracks.length > 0 && (
+          <View style={styles.playlistHeader}>
+            <Text style={styles.playlistHeaderText}>Playlist Name: {playlistName}</Text>
+            <Text style={styles.playlistHeaderText}>Playlist Description: {playlistDescription}</Text>
+            <FlatList
+              data={playlistTracks}
+              keyExtractor={(item) => item.track.id}
+              renderItem={({ item }) => (
+                <View style={styles.albumCard}>
+                  <Text style={styles.albumName}>{item.track.name}</Text>
+                </View>
+              )}
+            />
+          </View>
+        )}
+      </View>
     </LinearGradient>
   );
 };
