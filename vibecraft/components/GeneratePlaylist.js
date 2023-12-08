@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     margin: 10,
     padding: 10,
     backgroundColor: '#AE3BDE',
-    borderRadius: 5,
+    borderRadius: 10,
     elevation: 3,
   },
   albumName: {
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#43464B', 
     paddingVertical: 12,
     paddingHorizontal: 10,
-    borderRadius: 10,
+    borderRadius: 0,
     alignItems: 'center',
   },
   buttonText: {
