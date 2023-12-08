@@ -1,8 +1,17 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput, Button, FlatList, Keyboard, TouchableOpacity } from 'react-native';
-import { getAccessToken } from '../auth';
+import {
+  View,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  Keyboard,
+  ActivityIndicator,
+} from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { getAccessToken } from '../auth';
 
 
 const styles = StyleSheet.create({
@@ -30,18 +39,19 @@ const styles = StyleSheet.create({
   playlistHeaderText: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: 'white'
   },
   albumCard: {
     margin: 10,
     padding: 10,
-    backgroundColor: '#AE3BDE',
+    backgroundColor: '#D4C4FB',
     borderRadius: 10,
     elevation: 3,
   },
   albumName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'white',
+    color: 'black',
   },
   customButton: {
     backgroundColor: '#43464B', 
@@ -51,29 +61,43 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
+    color: 'black', 
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  loadingButton: {
+    // backgroundColor: 'yellow',
+  },
+  completeButton: {
+    backgroundColor: '#2BAE31',
+  },
+  completeButtonText: {
     color: 'white', 
     fontSize: 16,
     fontWeight: 'bold',
   },
+
 });
 
 const PlaylistGenerator = () => {
-  const route = useRoute();
-  const { selectedArtistId } = route.params;
-
-  const [playlistTracks, setPlaylistTracks] = useState([]);
-  const [playlistName, setPlaylistName] = useState('');
-  const [playlistDescription, setPlaylistDescription] = useState('');
+    const route = useRoute();
+    const { selectedArtistId } = route.params;
+  
+    const [playlistTracks, setPlaylistTracks] = useState([]);
+    const [playlistName, setPlaylistName] = useState('');
+    const [playlistDescription, setPlaylistDescription] = useState('');
+    const [loading, setLoading] = useState(false); // New state for loading indicator
+    const [completed, setCompleted] = useState(false); // New state for completed state
+  
 
   const handleGeneratePlaylist = async () => {
     try {
-
-        Keyboard.dismiss();
-
+      setLoading(true); // Set loading to true when starting API call
+  
+      Keyboard.dismiss();
+  
       const accessToken = await getAccessToken();
-      
-
-      // Fetch artist albums
+  
       const response = await fetch(`https://api.spotify.com/v1/artists/${selectedArtistId}/albums?market=US&limit=10`, {
         method: 'GET',
         headers: {
@@ -81,34 +105,37 @@ const PlaylistGenerator = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-
+  
       if (!response.ok) {
         throw new Error('Network response was not ok.');
       }
-
+  
       const data = await response.json();
       const albums = data.items || [];
-
-      // Use the entered playlist name and description
+  
       const { playlistId, name, description } = await createPlaylistWithTracks(albums, accessToken);
-
+  
       setPlaylistName(name);
       setPlaylistDescription(description);
-
-      // Fetch tracks for the created playlist
+  
       const playlistTracksResponse = await fetchPlaylistTracks(playlistId, accessToken);
-
+  
       if (playlistTracksResponse.ok) {
         const playlistTracksData = await playlistTracksResponse.json();
         setPlaylistTracks(playlistTracksData.items || []);
       } else {
         throw new Error('Failed to fetch playlist tracks.');
       }
+  
+      setLoading(false); // Set loading to false when API call is complete
+      setCompleted(true); // Set completed to true when API call is complete
     } catch (error) {
       console.error('Error:', error);
       // Handle error appropriately
+      setLoading(false); // Set loading to false in case of error
     }
   };
+  
 
 
   const createPlaylistWithTracks = async (albums, accessToken) => {
@@ -195,8 +222,8 @@ const PlaylistGenerator = () => {
   return (
     <LinearGradient
       colors={[
-        'rgba(0, 180, 150, 1)', 
-        'rgba(0, 255, 200, 1)',
+        'rgba(212,173,249,1)',
+        'rgba(113,0,218,1)',
         'rgba(0,0,0,1)',
       ]}
       start={{ x: 0, y: 0 }}
@@ -227,10 +254,21 @@ const PlaylistGenerator = () => {
           />
         </View>
         <TouchableOpacity
-          style={styles.customButton} // Styling the custom button
+          style={[
+            styles.customButton,
+            loading && styles.customButton, // Apply loading styles if loading is true
+            completed && styles.completeButton, // Apply completed styles if completed is true
+          ]}
           onPress={handleGeneratePlaylist}
+          disabled={loading || completed} // Disable button during loading and completed states
         >
-          <Text style={styles.buttonText}>Generate Playlist</Text>
+          {loading ? (
+            <ActivityIndicator size="small" color="white" />
+          ) : (
+            <Text style={styles.completeButtonText}>
+              {completed ? 'Complete' : 'Generate Playlist'}
+            </Text>
+          )}
         </TouchableOpacity>
         {playlistTracks.length > 0 && (
           <View style={styles.playlistHeader}>
