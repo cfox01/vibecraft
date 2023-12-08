@@ -1,6 +1,6 @@
 // LoginButton.js
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Button } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 
 import { handleSpotifyLogin } from '../auth';
 
@@ -20,27 +20,41 @@ const LoginButton = ({onLogin}) => {
   
 
   return (
-<View style={styles.container}>
-        <Button
-          title="Login with Spotify"
-          onPress={handleLoginPress}
-          color="white"
-        />
+    <View style={styles.container}>
+      <TouchableOpacity
+        onPress={handleLoginPress}
+        style={styles.button}
+      >
+        <Text style={styles.buttonText}>Login with Spotify</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    borderRadius: 25,
-    width: '40%',
-    height: '20%',
+    borderRadius: 15,
+    width: 180,
+    height: 60,
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: 'row',
+    backgroundColor: '#1DB954',
+  },
+  button: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    fontWeight: 'bold', 
+    color: '#191414',
+    fontSize: 18, 
   },
 });
 
 export default LoginButton;
+
+
+
 
