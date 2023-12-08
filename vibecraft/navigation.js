@@ -28,7 +28,12 @@ const AppStack = () => (
             color: '#fff',
           },
             }}/>
-    <Stack.Screen name="GeneratePlaylist" component={GeneratePlaylist}/>
+    <Stack.Screen name="GeneratePlaylist" component={GeneratePlaylist} options={{title: 'Create Playlist', headerShadowVisible: false, headerStyle: {
+            backgroundColor: '#242424',
+          }, headerTitleStyle: {
+            color: '#fff',
+          },
+            }}/>
   </Stack.Navigator>
 );
 
