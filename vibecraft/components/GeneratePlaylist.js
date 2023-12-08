@@ -17,29 +17,31 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     borderColor: 'black',
-    borderWidth: 4,
+    borderWidth: 3,
     marginBottom: 10,
     paddingHorizontal: 8,
     backgroundColor: 'white', //Dark gray
   },
   playlistHeader: {
-    marginBottom: 10,
+    marginBottom: 20,
+    marginTop: 20,
     alignItems: 'center',
   },
   playlistHeaderText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   albumCard: {
     margin: 10,
     padding: 10,
-    backgroundColor: 'white',
+    backgroundColor: '#AE3BDE',
     borderRadius: 5,
     elevation: 3,
   },
   albumName: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: 'white',
   },
   customButton: {
     backgroundColor: '#43464B', 
@@ -49,7 +51,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    color: '#d3d3d3', 
+    color: 'white', 
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -203,7 +205,7 @@ const PlaylistGenerator = () => {
     >
       <View style={styles.container}>
         <View style={[styles.inputContainer, { marginBottom: 20 }]}>
-          <Text>Playlist Name:</Text>
+          <Text style={styles.playlistHeaderText}>Playlist Name:</Text>
           <TextInput
             style={[styles.input, styles.darkBackground]} // Applying dark background style
             value={playlistName}
@@ -213,7 +215,7 @@ const PlaylistGenerator = () => {
           />
         </View>
         <View style={[styles.inputContainer, { marginBottom: 20 }]}>
-          <Text>Playlist Description:</Text>
+          <Text style={styles.playlistHeaderText}>Playlist Description:</Text>
           <TextInput
             style={[styles.input, styles.darkBackground]} // Applying dark background style
             value={playlistDescription}
