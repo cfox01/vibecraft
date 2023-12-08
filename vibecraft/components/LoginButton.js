@@ -1,30 +1,24 @@
-// LoginButton.js
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 
 import { handleSpotifyLogin } from '../auth';
 
-const LoginButton = ({onLogin}) => {
+const LoginButton = ({ onLogin }) => {
   const [loggedIn, setLoggedIn] = useState(false);
- 
 
   useEffect(() => {
     if (loggedIn) {
-      onLogin()
+      onLogin();
     }
   }, [loggedIn]);
 
   const handleLoginPress = async () => {
-    setLoggedIn(await handleSpotifyLogin())
-  }
-  
+    setLoggedIn(await handleSpotifyLogin());
+  };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        onPress={handleLoginPress}
-        style={styles.button}
-      >
+      <TouchableOpacity onPress={handleLoginPress} style={styles.button}>
         <Text style={styles.buttonText}>Login with Spotify</Text>
       </TouchableOpacity>
     </View>
@@ -38,22 +32,30 @@ const styles = StyleSheet.create({
     height: 60,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#1DB954',
+    backgroundColor: '#6F1C88',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 5,
   },
   button: {
-    width: '100%',
-    height: '100%',
+    borderRadius: 25,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
   },
   buttonText: {
-    fontWeight: 'bold', 
-    color: '#191414',
-    fontSize: 18, 
+    color: 'white',
+    fontSize: 15,
+    fontWeight: 'bold',
   },
 });
 
 export default LoginButton;
+
 
 
 
