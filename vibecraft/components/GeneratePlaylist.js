@@ -1,6 +1,5 @@
-// Import necessary modules and components
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, FlatList, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Text, TextInput, Button, FlatList, Keyboard } from 'react-native';
 import { getAccessToken } from '../auth';
 import { useRoute } from '@react-navigation/native';
 
@@ -9,6 +8,16 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
     paddingTop: 20,
+  },
+  inputContainer: {
+    marginBottom: 10,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 8,
   },
   playlistHeader: {
     marginBottom: 10,
@@ -36,18 +45,18 @@ const PlaylistGenerator = () => {
   const { selectedArtistId } = route.params;
 
   const [playlistTracks, setPlaylistTracks] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [playlistName, setPlaylistName] = useState('');
   const [playlistDescription, setPlaylistDescription] = useState('');
 
-  useEffect(() => {
-    fetchArtistAlbumsAndCreatePlaylist();
-  }, [selectedArtistId]);
-
-  const fetchArtistAlbumsAndCreatePlaylist = async () => {
+  const handleGeneratePlaylist = async () => {
     try {
-      const accessToken = await getAccessToken();
 
+        Keyboard.dismiss();
+
+      const accessToken = await getAccessToken();
+      
+
+      // Fetch artist albums
       const response = await fetch(`https://api.spotify.com/v1/artists/${selectedArtistId}/albums?market=US&limit=10`, {
         method: 'GET',
         headers: {
@@ -63,30 +72,30 @@ const PlaylistGenerator = () => {
       const data = await response.json();
       const albums = data.items || [];
 
+      // Use the entered playlist name and description
       const { playlistId, name, description } = await createPlaylistWithTracks(albums, accessToken);
 
       setPlaylistName(name);
       setPlaylistDescription(description);
 
+      // Fetch tracks for the created playlist
       const playlistTracksResponse = await fetchPlaylistTracks(playlistId, accessToken);
 
       if (playlistTracksResponse.ok) {
         const playlistTracksData = await playlistTracksResponse.json();
         setPlaylistTracks(playlistTracksData.items || []);
-        setLoading(false);
       } else {
         throw new Error('Failed to fetch playlist tracks.');
       }
     } catch (error) {
       console.error('Error:', error);
-      Alert.alert('Error', 'Failed to fetch data. Please try again.');
+      // Handle error appropriately
     }
   };
 
+
   const createPlaylistWithTracks = async (albums, accessToken) => {
     try {
-      const playlistName = 'Testing';
-      const playlistDescription = 'Description for my playlist';
 
       const createPlaylistResponse = await fetch('https://api.spotify.com/v1/me/playlists', {
         method: 'POST',
@@ -168,23 +177,41 @@ const PlaylistGenerator = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.playlistHeader}>
-        <Text style={styles.playlistHeaderText}>Playlist Name: {playlistName}</Text>
-        <Text style={styles.playlistHeaderText}>Playlist Description: {playlistDescription}</Text>
-      </View>
-      {loading ? (
-        <Text>Loading...</Text>
-      ) : (
-        <FlatList
-          data={playlistTracks}
-          keyExtractor={(item) => item.track.id}
-          renderItem={({ item }) => (
-            <View style={styles.albumCard}>
-              <Text style={styles.albumName}>{item.track.name}</Text>
-              {/* Add more track information as needed */}
-            </View>
-          )}
+      <View style={styles.inputContainer}>
+        <Text>Playlist Name:</Text>
+        <TextInput
+          style={styles.input}
+          value={playlistName}
+          onChangeText={(text) => setPlaylistName(text)}
+          placeholder="Enter Playlist Name"
         />
+      </View>
+      <View style={styles.inputContainer}>
+        <Text>Playlist Description:</Text>
+        <TextInput
+          style={styles.input}
+          value={playlistDescription}
+          onChangeText={(text) => setPlaylistDescription(text)}
+          placeholder="Enter Playlist Description"
+          multiline
+          numberOfLines={4} // You can adjust the number of lines as needed
+        />
+      </View>
+      <Button title="Generate Playlist" onPress={handleGeneratePlaylist} />
+      {playlistTracks.length > 0 && (
+        <View style={styles.playlistHeader}>
+          <Text style={styles.playlistHeaderText}>Playlist Name: {playlistName}</Text>
+          <Text style={styles.playlistHeaderText}>Playlist Description: {playlistDescription}</Text>
+          <FlatList
+            data={playlistTracks}
+            keyExtractor={(item) => item.track.id}
+            renderItem={({ item }) => (
+              <View style={styles.albumCard}>
+                <Text style={styles.albumName}>{item.track.name}</Text>
+              </View>
+            )}
+          />
+        </View>
       )}
     </View>
   );
