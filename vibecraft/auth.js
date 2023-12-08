@@ -1,6 +1,7 @@
 import * as WebBrowser from 'expo-web-browser';
 import * as Crypto from 'expo-crypto';
 import queryString from 'query-string';
+import jwt_decode from 'jwt-decode';
 
 const CLIENT_ID = process.env.EXPO_PUBLIC_ID; // Replace with your Spotify Client ID
 const REDIRECT_URI = process.env.EXPO_PUBLIC_URI;// Expo's redirect URI
@@ -73,9 +74,9 @@ export const fetchAccessToken = async (code) => {
 
       // Check if access_token exists in the response
       if (tokenData.access_token) {
-        setUserDisplayName(await fetchUserInfo(tokenData.access_token));
         setAccessToken(tokenData.access_token);
         setRefreshToken(tokenData.refresh_token);
+        setUserDisplayName(await fetchUserInfo(tokenData.access_token));
         return true;
 
       } else {
@@ -84,6 +85,53 @@ export const fetchAccessToken = async (code) => {
     } catch (error) {
       console.error('Error fetching access token:', error);
     }
+  };
+
+  export const getValidAccessToken = async () => {
+    try {
+      // Check if access token is stored
+      const storedToken = getAccessToken();
+
+      console.log(storedToken);
+  
+      // Token exists, check if it's still valid
+      const isValid = isTokenValid(storedToken);
+  
+        if (isValid) {
+
+          return storedToken
+        } else {
+          const newToken = await RefreshAccessToken()
+          return getAccessToken()
+        }
+  
+
+    } catch (error) {
+      // Handle errors
+      console.error('Error getting valid access token:', error);
+      throw error;
+    }
+  };
+
+  export const isTokenValid = (token) => {
+    if (!token) {
+      // Token is missing or falsy
+      return false;
+    }
+  
+    try {
+      const decodedToken = jwt_decode(token, { complete: true });
+      const expirationTimeInSeconds = decodedToken.exp; // Expiration time in seconds
+      const currentTimeInSeconds = Math.floor(Date.now() / 1000); // Current time in seconds
+  
+      // Check if the token is expired
+      return expirationTimeInSeconds > currentTimeInSeconds;
+    } catch (error) {
+      // Error decoding the token (invalid format, etc.)
+      console.error('Error decoding token:', error);
+      return false;
+    }
+    
   };
 
 export const RefreshAccessToken = async () => {
@@ -116,25 +164,26 @@ export const RefreshAccessToken = async () => {
 }
 
 export const fetchUserInfo = async (accessToken) => {
-    try {
-      const response = await fetch('https://api.spotify.com/v1/me', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-  
-      if (response.ok) {
-        const userData = await response.json();
-        const userDisplayName = userData.display_name;
-        return userDisplayName;
+  try {
+    const response = await fetch('https://api.spotify.com/v1/me', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-      } else {
-        console.error('Error fetching user information:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error fetching user information:', error);
+    if (response.ok) {
+      const userData = await response.json();
+      const userDisplayName = userData.display_name;
+      return userDisplayName;
+
+    } else {
+      console.error('Error fetching user information:', response.statusText);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching user information:', error);
+  }
+};
+
 
  export const handleSpotifyLogin = async () => {
     const state = await generateRandomState();

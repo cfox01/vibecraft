@@ -21,6 +21,8 @@
     "expo-secure-store": "~12.3.1",
     "expo-status-bar": "~1.6.0",
     "expo-web-browser": "~12.3.2",
+    "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
     "query-string": "^8.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",

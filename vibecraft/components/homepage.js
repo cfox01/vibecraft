@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { RefreshAccessToken, getAccessToken, getUserDisplayName } from '../auth';
+import { getUserDisplayName } from '../auth';
 
 const HomePage = ({ navigation }) => {
 
