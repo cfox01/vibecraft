@@ -195,7 +195,7 @@ const PlaylistGenerator = () => {
           style={styles.input}
           value={playlistName}
           onChangeText={(text) => setPlaylistName(text)}
-          placeholder="Enter Playlist Name"
+          placeholder="..."
           placeholderTextColor={'#d3d3d3'} // light gray
         />
       </View>
@@ -205,7 +205,7 @@ const PlaylistGenerator = () => {
           style={styles.input}
           value={playlistDescription}
           onChangeText={(text) => setPlaylistDescription(text)}
-          placeholder="Enter Playlist Description"
+          placeholder="..."
           placeholderTextColor={'#d3d3d3'} //light gray
           multiline
           numberOfLines={4} // You can adjust the number of lines as needed
