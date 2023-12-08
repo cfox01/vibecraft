@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Text, TextInput, Button, FlatList, Keyboard } from 'react-native';
 import { getAccessToken } from '../auth';
 import { useRoute } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const styles = StyleSheet.create({
   container: {
@@ -176,6 +177,16 @@ const PlaylistGenerator = () => {
   };
 
   return (
+    <LinearGradient
+      colors={[
+        'rgba(0, 180, 150, 1)', 
+        'rgba(0, 255, 200, 1)',
+        'rgba(0,0,0,1)',
+      ]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}
+    >
     <View style={styles.container}>
       <View style={styles.inputContainer}>
         <Text>Playlist Name:</Text>
@@ -214,6 +225,7 @@ const PlaylistGenerator = () => {
         </View>
       )}
     </View>
+    </LinearGradient>
   );
 };
 
