@@ -15,10 +15,11 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
+    borderColor: 'black',
+    borderWidth: 4,
     marginBottom: 10,
     paddingHorizontal: 8,
+    backgroundColor: '#43464B', //Dark gray
   },
   playlistHeader: {
     marginBottom: 10,
@@ -195,6 +196,7 @@ const PlaylistGenerator = () => {
           value={playlistName}
           onChangeText={(text) => setPlaylistName(text)}
           placeholder="Enter Playlist Name"
+          placeholderTextColor={'#d3d3d3'} // light gray
         />
       </View>
       <View style={styles.inputContainer}>
@@ -204,6 +206,7 @@ const PlaylistGenerator = () => {
           value={playlistDescription}
           onChangeText={(text) => setPlaylistDescription(text)}
           placeholder="Enter Playlist Description"
+          placeholderTextColor={'#d3d3d3'} //light gray
           multiline
           numberOfLines={4} // You can adjust the number of lines as needed
         />
