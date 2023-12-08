@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     marginBottom: 10,
     paddingHorizontal: 8,
-    backgroundColor: '#43464B', //Dark gray
+    backgroundColor: 'white', //Dark gray
   },
   playlistHeader: {
     marginBottom: 10,
@@ -209,7 +209,7 @@ const PlaylistGenerator = () => {
             value={playlistName}
             onChangeText={(text) => setPlaylistName(text)}
             placeholder="..."
-            placeholderTextColor={'#d3d3d3'} // Light gray
+            placeholderTextColor={'black'} // Light gray
           />
         </View>
         <View style={[styles.inputContainer, { marginBottom: 20 }]}>
@@ -219,7 +219,7 @@ const PlaylistGenerator = () => {
             value={playlistDescription}
             onChangeText={(text) => setPlaylistDescription(text)}
             placeholder="..."
-            placeholderTextColor={'#d3d3d3'} // Light gray
+            placeholderTextColor={'black'} // Light gray
             multiline
             numberOfLines={4}
           />
